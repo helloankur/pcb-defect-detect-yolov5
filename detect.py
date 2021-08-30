@@ -252,7 +252,7 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 def parse_opt(im_path):
     parser = argparse.ArgumentParser()
     parser.add_argument('--weights', nargs='+', type=str, default=
-    'D:\\Ankur\\Python_Project\\pythonProject\\Upwork\\weight\\PCB_fault_detect\\exp\\weights\\best.pt',
+    'weights/best.pt',
                         help='model.pt path(s)')
     parser.add_argument('--source', type=str, default=im_path, help='file/dir/URL/glob, 0 for webcam')
     parser.add_argument('--imgsz', '--img', '--img-size', nargs='+', type=int, default=[640], help='inference size h,w')

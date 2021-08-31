@@ -14,6 +14,7 @@ import time
 from pathlib import Path
 
 import cv2
+import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
@@ -296,6 +297,19 @@ def main(opt):
     check_requirements(exclude=('tensorboard', 'thop'))
     path,pred = run(**vars(opt))
     return path,pred
+
+def pred(im_path):
+    # im_path = input("enter image path:")
+    #im_path = '00041002_test.jpg'
+    opt = parse_opt(im_path)
+    pred_img_path, out = main(opt)
+    print(pred_img_path)
+    img = cv2.imread(pred_img_path)
+
+    plt.imshow(img)
+    plt.show()
+    return img
+
 
 
 if __name__ == "__main__":

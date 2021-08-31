@@ -306,8 +306,6 @@ def pred(im_path):
     print(pred_img_path)
     img = cv2.imread(pred_img_path)
 
-    plt.imshow(img)
-    plt.show()
     return img
 
 
@@ -344,8 +342,8 @@ if __name__ == "__main__":
             img=cv2.putText(img,text=str(_.strip(" ")), org=(x,y), fontFace=font,fontScale=
                    fontScale, color=color, thickness=thickness, lineType=cv2.LINE_AA)
 
-        cv2.imshow('img', img)
-        cv2.waitKey()
+        plt.imshow(img)
+        plt.show()
 
         shutil.rmtree('runs',ignore_errors=True)
         print("remove saved images")

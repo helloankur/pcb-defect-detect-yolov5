@@ -3,8 +3,7 @@ import time
 
 import  cv2
 import matplotlib.pyplot as plt
-
-import matplotlib.image as mpimg
+from detect import pred
 
 
 def test_actual_img(img_path,text_path):
@@ -15,6 +14,7 @@ def test_actual_img(img_path,text_path):
                2: "short", 3: "mousebite", 4: "spur", 5: "copper", 6: "pin-hole"}
 
     img=cv2.imread(img_path)
+
 
     with open(text_path, 'r') as f:
 
@@ -53,14 +53,14 @@ for _ in os.listdir(img_path):
     print(img_read)
     print(annot_path)
     img_show=test_actual_img(img_read,annot_path)
-
+    im = pred(img_read)
     fig = plt.figure(1, figsize=(100, 100))
     fig.add_subplot(121)
     plt.imshow(img_show)
 
     # Plot 2 image (Predict image)
     fig.add_subplot(122)
-
+    plt.imshow(im)
 
     plt.show()
 

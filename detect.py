@@ -14,6 +14,7 @@ import time
 from pathlib import Path
 
 import cv2
+import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
@@ -170,6 +171,7 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
         if classify:
             pred = apply_classifier(pred, modelc, img, im0s)
 
+
         # Process predictions
         for i, det in enumerate(pred):  # detections per image
             if webcam:  # batch_size >= 1
@@ -184,15 +186,21 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
             s += '%gx%g ' % img.shape[2:]  # print string
             gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
             imc = im0.copy() if save_crop else im0  # for save_crop
+            out=' '
             if len(det):
                 # Rescale boxes from img_size to im0 size
                 det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
 
                 # Print results
                 for c in det[:, -1].unique():
+
                     n = (det[:, -1] == c).sum()  # detections per class
 
                     s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
+
+                    out += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # additional add to get string output
+
+
 
                 # Write results
                 for *xyxy, conf, cls in reversed(det):
@@ -246,13 +254,15 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
         strip_optimizer(weights)  # update model (to fix SourceChangeWarning)
 
     print(f'Done. ({time.time() - t0:.3f}s)')
-    return save_path
+
+
+    return save_path,out
 
 
 def parse_opt(im_path):
     parser = argparse.ArgumentParser()
     parser.add_argument('--weights', nargs='+', type=str, default=
-    'weights/best.pt',
+    'weights\\best.pt',
                         help='model.pt path(s)')
     parser.add_argument('--source', type=str, default=im_path, help='file/dir/URL/glob, 0 for webcam')
     parser.add_argument('--imgsz', '--img', '--img-size', nargs='+', type=int, default=[640], help='inference size h,w')
@@ -285,18 +295,56 @@ def parse_opt(im_path):
 def main(opt):
     print(colorstr('detect: ') + ', '.join(f'{k}={v}' for k, v in vars(opt).items()))
     check_requirements(exclude=('tensorboard', 'thop'))
-    path = run(**vars(opt))
-    return path
+    path,pred = run(**vars(opt))
+    return path,pred
+
+def pred(im_path):
+    # im_path = input("enter image path:")
+    #im_path = '00041002_test.jpg'
+    opt = parse_opt(im_path)
+    pred_img_path, out = main(opt)
+    print(pred_img_path)
+    img = cv2.imread(pred_img_path)
+
+    return img
+
 
 
 if __name__ == "__main__":
     while True:
-        im_path = input("enter image path:")
+        #im_path = input("enter image path:")
+        im_path='00041002_test.jpg'
         opt = parse_opt(im_path)
-        pred_img_path=main(opt)
+        pred_img_path,out=main(opt)
         img=cv2.imread(pred_img_path)
-        cv2.imshow('img',img)
-        cv2.waitKey()
+
+        # font
+        font = cv2.FONT_HERSHEY_SIMPLEX
+
+        # org
+        x=50
+        y=50
+
+        # fontScale
+        fontScale = 1
+
+        # Blue color in BGR
+        color = (255, 0, 0)
+
+        # Line thickness of 2 px
+        thickness = 2
+
+
+        print(out.strip("  ").split(","))
+        for _ in out.strip(" ").split(","):
+            y+=30
+            print(_.strip(" ")+'\n')
+            img=cv2.putText(img,text=str(_.strip(" ")), org=(x,y), fontFace=font,fontScale=
+                   fontScale, color=color, thickness=thickness, lineType=cv2.LINE_AA)
+
+        plt.imshow(img)
+        plt.show()
+
         shutil.rmtree('runs',ignore_errors=True)
         print("remove saved images")
         # os.removedirs('runs')

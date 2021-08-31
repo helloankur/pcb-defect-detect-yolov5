@@ -21,7 +21,7 @@ from utils.metrics import fitness
 
 # Settings
 matplotlib.rc('font', **{'size': 11})
-matplotlib.use('Agg')  # for writing to files only
+matplotlib.use('TkAgg')  # for writing to files only
 
 
 class Colors:

@@ -3,7 +3,7 @@ import time
 
 import  cv2
 import matplotlib.pyplot as plt
-from detect import pred
+
 import matplotlib.image as mpimg
 
 
@@ -40,7 +40,7 @@ def test_actual_img(img_path,text_path):
 
 img_path='tmp\\images\\test\\'
 txt_path='dataset\\txt\\'
-print(os.listdir(img_path))
+#print(os.listdir(img_path))
 
 
 
@@ -54,9 +54,14 @@ for _ in os.listdir(img_path):
     print(annot_path)
     img_show=test_actual_img(img_read,annot_path)
 
-    cv2.imshow('1', img_show)
     fig = plt.figure(1, figsize=(100, 100))
-    fig.add_subplot(221)
+    fig.add_subplot(121)
+    plt.imshow(img_show)
+
+    # Plot 2 image (Predict image)
+    fig.add_subplot(122)
+
+
     plt.show()
 
 

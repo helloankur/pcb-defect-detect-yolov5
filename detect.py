@@ -346,6 +346,7 @@ if __name__ == "__main__":
 
         cv2.imshow('img', img)
         cv2.waitKey()
+
         shutil.rmtree('runs',ignore_errors=True)
         print("remove saved images")
         # os.removedirs('runs')

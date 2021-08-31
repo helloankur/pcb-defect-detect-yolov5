@@ -305,14 +305,35 @@ if __name__ == "__main__":
         opt = parse_opt(im_path)
         pred_img_path,out=main(opt)
         img=cv2.imread(pred_img_path)
-        cv2.imshow('img',img)
+
+        # font
+        font = cv2.FONT_HERSHEY_SIMPLEX
+
+        # org
+        x=50
+        y=50
+
+        # fontScale
+        fontScale = 1
+
+        # Blue color in BGR
+        color = (255, 0, 0)
+
+        # Line thickness of 2 px
+        thickness = 2
+
+
         print(out.strip("  ").split(","))
         for _ in out.strip(" ").split(","):
-            print(_+'\n')
+            y+=30
+            print(_.strip(" ")+'\n')
+            img=cv2.putText(img,text=str(_.strip(" ")), org=(x,y), fontFace=font,fontScale=
+                   fontScale, color=color, thickness=thickness, lineType=cv2.LINE_AA)
+
+        cv2.imshow('img', img)
         cv2.waitKey()
         shutil.rmtree('runs',ignore_errors=True)
         print("remove saved images")
         # os.removedirs('runs')
         time.sleep(1)
-
 

@@ -4,7 +4,7 @@ import time
 import  cv2
 import matplotlib.pyplot as plt
 from detect import pred
-
+import glob
 
 def test_actual_img(img_path,text_path):
     color={0: (255,255,0), 1: (255,125,0),
@@ -40,16 +40,19 @@ def test_actual_img(img_path,text_path):
 
 img_path='tmp\\images\\test\\'
 txt_path='dataset\\txt\\'
+
 #print(os.listdir(img_path))
-
-
 
 
 
 for _ in os.listdir(img_path):
     text_file=(_.strip('.jpg'))+'.txt'
     img_read=img_path + _
-    annot_path=txt_path+text_file
+
+    txt_path = glob.glob('pcb_defect/PCBData/**/{}'.format(text_file), recursive=True)
+    print(txt_path)
+    #annot_path=txt_path+text_file
+    annot_path=txt_path[0]
     print(img_read)
     print(annot_path)
     img_show=test_actual_img(img_read,annot_path)

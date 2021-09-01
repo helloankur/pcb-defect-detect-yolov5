@@ -57,15 +57,23 @@ for _ in os.listdir(img_path):
     print(annot_path)
     img_show=test_actual_img(img_read,annot_path)
     im = pred(img_read)
-    fig = plt.figure(1, figsize=(100, 100))
-    fig.add_subplot(121)
-    plt.imshow(img_show)
 
+    fig = plt.figure(1, figsize=(100, 100))
+
+
+    fig.add_subplot(121)
+    plt.title('actual test image')
+    plt.imshow(img_show)
     # Plot 2 image (Predict image)
     fig.add_subplot(122)
+    plt.title('Pred test image')
     plt.imshow(im)
 
+
     plt.show()
+
+
+
 
 
 

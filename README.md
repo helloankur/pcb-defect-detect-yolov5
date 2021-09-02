@@ -58,7 +58,7 @@ https://github.com/tangsanli5201/DeepPCB
 # :rocket:  Weights & Biases 
 
 
-## bonous of  W&B use for monitor live performance of you model.
+## bonous of  W&B use for monitor live performance of your model.
 
 by using command :
 

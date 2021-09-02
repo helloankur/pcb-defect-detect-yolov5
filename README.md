@@ -55,7 +55,18 @@ https://github.com/tangsanli5201/DeepPCB
 :arrow_right:  tqdm>=4.41.0
 
 
+# :rocket:  Weights & Biases 
 
 
+## bonous of  W&B use for monitor live performance of you model.
 
+by using command :
 
+```
+!pip install -q --upgrade wandb
+### # Login 
+import wandb
+wandb.login()
+```
+
+use above code in Notebook ---> Jupyter,Kaggle or Google colab 

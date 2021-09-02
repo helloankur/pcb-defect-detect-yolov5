@@ -11,20 +11,19 @@ Create main.py to run the whole model and detect the defect from PCB Image.
 
 Image Size required = 640 x 640
 
----------------------------------------------------------------------------------
+
 :memo:  yoloV5 : 
 ---------------------------------------------------------------------------------
 https://github.com/ultralytics/yolov5
 
 
----------------------------------------------------------------------------------
 :file_folder: ~~ Dataset :~~
 ---------------------------------------------------------------------------------
 
 
 https://github.com/tangsanli5201/DeepPCB
 
----------------------------------------------------------------------------------
+
 :arrow_heading_down:  Download Model and Weight
 ---------------------------------------------------------------------------------
   - Download weight from weight Directory follow the link below
@@ -33,7 +32,7 @@ https://github.com/tangsanli5201/DeepPCB
 
 
 
----------------------------------------------------------------------------------
+
 :desktop_computer: 	:hammer_and_wrench: Download Required Library:
 ---------------------------------------------------------------------------------
 

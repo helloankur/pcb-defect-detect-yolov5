@@ -1,80 +1,69 @@
 import os
 import time
 
-import  cv2
+import cv2
 import matplotlib.pyplot as plt
 from detect import pred
 import glob
 
-def test_actual_img(img_path,text_path):
-    color={0: (255,255,0), 1: (255,125,0),
-               2: (125,125,0), 3: (129,100,10), 4: (100,125,250), 5: (25,125,170), 6: (99,199,159)}
+
+def test_actual_img(img_path, text_path):
+    color = {0: (255, 255, 0), 1: (255, 125, 0),
+             2: (125, 125, 0), 3: (129, 100, 10), 4: (100, 125, 250), 5: (25, 125, 170), 6: (99, 199, 159)}
 
     classes = {0: "background (not used)", 1: "open",
                2: "short", 3: "mousebite", 4: "spur", 5: "copper", 6: "pin-hole"}
 
-    img=cv2.imread(img_path)
-
+    img = cv2.imread(img_path)
 
     with open(text_path, 'r') as f:
+        for line in f.readlines():
+            annot = (line.strip("\n").split(" "))
 
-      for line in f.readlines():
+            x_min = int(annot[0])
+            y_min = int(annot[1])
+            x_max = int(annot[2])
+            y_max = int(annot[3])
+            label = int(annot[4])
 
-        annot = (line.strip("\n").split(" "))
+            img = cv2.rectangle(img, (x_min, y_min), (x_max, y_max), color=color[label], thickness=2)
+            img_show = cv2.putText(img, classes[label], (int(x_min - 10), int(y_min - 10)), cv2.FONT_HERSHEY_TRIPLEX, 1,
+                                   color=(255, 0, 0), thickness=1)
 
-        x_min = int(annot[0])
-        y_min = int(annot[1])
-        x_max = int(annot[2])
-        y_max = int(annot[3])
-        label = int(annot[4])
+    return img_show
 
-        img=cv2.rectangle(img,(x_min,y_min),(x_max,y_max),color=color[label],thickness=2)
-        img_show=cv2.putText(img,classes[label],(int(x_min-10),int(y_min-10)),cv2.FONT_HERSHEY_TRIPLEX,1,
-                             color=(255,0,0),thickness = 1)
+if __name__ == '__main__':
 
+    img_path = 'tmp\\images\\test\\'
+    txt_path = 'dataset\\txt\\'
 
-
-
-    return  img_show
-
-
-img_path='tmp\\images\\test\\'
-txt_path='dataset\\txt\\'
-
-#print(os.listdir(img_path))
+    # print(os.listdir(img_path))
 
 
+    for _ in os.listdir(img_path):
+        text_file = (_.strip('.jpg')) + '.txt'
 
-for _ in os.listdir(img_path):
-    text_file=(_.strip('.jpg'))+'.txt'
-    img_read=img_path + _
+        img_read = img_path + _
 
-    txt_path = glob.glob('pcb_defect/PCBData/**/{}'.format(text_file), recursive=True)
-    print(txt_path)
-    #annot_path=txt_path+text_file
-    annot_path=txt_path[0]
-    print(img_read)
-    print(annot_path)
-    img_show=test_actual_img(img_read,annot_path)
-    im = pred(img_read)
+        txt_path = glob.glob('DeepPCB/PCBData/**/{}'.format(text_file), recursive=True)
 
-    fig = plt.figure(1, figsize=(100, 100))
+        # print(txt_path)
 
+        annot_path = txt_path[0]
 
-    fig.add_subplot(121)
-    plt.title('actual test image')
-    plt.imshow(img_show)
-    # Plot 2 image (Predict image)
-    fig.add_subplot(122)
-    plt.title('Pred test image')
-    plt.imshow(im)
+        # print(img_read)
+        # print(annot_path)
 
+        img_show = test_actual_img(img_read, annot_path)
+        im = pred(img_read)
 
-    plt.show()
-
-
-
-
-
-
-
+        fig = plt.figure(1, figsize=(100, 100))
+        fig.add_subplot(121)
+        plt.title('actual test image')
+        plt.imshow(img_show)
+        # Plot 2 image (Predict image)
+        fig.add_subplot(122)
+        plt.title('Pred test image')
+        plt.imshow(im)
+        plt.show(block=False)
+        plt.pause(1)

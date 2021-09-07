@@ -303,10 +303,10 @@ def pred(im_path):
     #im_path = '00041002_test.jpg'
     opt = parse_opt(im_path)
     pred_img_path, out = main(opt)
-    print(pred_img_path)
-    img = cv2.imread(pred_img_path)
+    # print(pred_img_path)
+    # img = cv2.imread(pred_img_path)
 
-    return img
+    return pred_img_path ,out
 
 
 

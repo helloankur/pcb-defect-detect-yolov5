@@ -218,6 +218,5 @@ if __name__ == '__main__':
     test_txt_path='DeepPCB\\PCBData\\test.txt'
     train_val_txt_path='DeepPCB\\PCBData\\trainval.txt'
     run=create_dataset(test_split=0.33, path_ds=path_ds,val_split=0.0)
-
     run.one_dir_data_set()
     run.dataset4yolo()

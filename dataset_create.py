@@ -57,25 +57,32 @@ class create_dataset:
         random.shuffle(sample_img)
 
         split_size = int(len(sample_img) * self.test_split)
-        self.train_val = sample_img[split_size:]
 
+        self.train_val = sample_img[split_size:]
         self.test = sample_img[:split_size]
 
-        val_split = int(len(self.train_val) * self.val_split)
-        random.seed(101)
-        random.shuffle(self.train_val)
-        self.train = self.train_val[val_split:]  # create train dataset from train_val text file
-        self.val = self.train_val[:val_split]
+        if self.val_split >0:
+            os.makedirs('tmp\\images\\val', exist_ok=True)
+            os.makedirs('tmp\\labels\\val', exist_ok=True)
+            val_split = int(len(self.train_val) * self.val_split)
+            random.seed(45)
+            random.shuffle(self.train_val)
+            self.train = self.train_val[val_split:]  # create train dataset from train_val text file
+            self.val = self.train_val[:val_split]
+
+        else:
+            self.train=self.train_val
+
 
         # print(len(self.train))
         # print((len(self.test)))
         # print(len(self.val))
 
         os.makedirs('tmp\\images\\train', exist_ok=True)
-        os.makedirs('tmp\\images\\val', exist_ok=True)
+
         os.makedirs('tmp\\images\\test', exist_ok=True)
+
         os.makedirs('tmp\\labels\\train', exist_ok=True)
-        os.makedirs('tmp\\labels\\val', exist_ok=True)
         os.makedirs('tmp\\labels\\test', exist_ok=True)
 
         self.datasets = [self.train, self.val, self.test]
@@ -210,8 +217,7 @@ if __name__ == '__main__':
     path_ds = 'DeepPCB/PCBData/'
     test_txt_path='DeepPCB\\PCBData\\test.txt'
     train_val_txt_path='DeepPCB\\PCBData\\trainval.txt'
-    run=create_dataset(test_split=0.33, path_ds=path_ds)
+    run=create_dataset(test_split=0.33, path_ds=path_ds,val_split=0.0)
 
     run.one_dir_data_set()
-
     run.dataset4yolo()

@@ -16,10 +16,8 @@ classes = {0: "background (not used)", 1: "open", 2: "short", 3: "mousebite", 4:
 class create_dataset:
 
     def __init__(self,val_split=0.1,test_split=None,path_ds=" ",split_from_txt_file=True,train_txt_path="",
-                 test_txt_path="",img_resize=True,dsize=(512,512)):   # split default 0.1 for training set
+                 test_txt_path=""):   # split default 0.1 for training set
 
-        self.img_resize=img_resize
-        self.dsize=dsize
         self.split_from_txt_file=split_from_txt_file
         self.train_txt_path=train_txt_path
         self.test_txt_path=test_txt_path
@@ -167,15 +165,11 @@ class create_dataset:
                 img_id = (tail_img.strip('_test.jpg'))
                 #print(img_id)
                 # print(tail+'_test.jpg')
-                if self.img_resize:
-                    img_read = cv2.imread(path_jpg)
-                    img_read=cv2.resize(img_read,dsize=self.dsize)
-                    cv2.imwrite('tmp/images/' + str(self.dir_nme[folder_num]) + '/' + img_id+ '.jpg',img_read)
-                else:
-                    shutil.copy(path_jpg, 'tmp/images/' + str(self.dir_nme[folder_num]))
+                img_read = cv2.imread(path_jpg)
+                shutil.copy(path_jpg, 'tmp/images/' + str(self.dir_nme[folder_num]))
 
-                    os.rename('tmp/images/' + str(self.dir_nme[folder_num]) + '/' + img_id + '_test.jpg',
-                              'tmp/images/' + str(self.dir_nme[folder_num]) + '/' + img_id+ '.jpg')
+                os.rename('tmp/images/' + str(self.dir_nme[folder_num]) + '/' + img_id + '_test.jpg',
+                          'tmp/images/' + str(self.dir_nme[folder_num]) + '/' + img_id+ '.jpg')
 
 
 
@@ -199,7 +193,6 @@ class create_dataset:
 
                         # Normalise the co-ordinates by the dimensions of the image
                         image_w, image_h, image_c = img_read.shape
-                        print(image_w,image_h)
                         b_center_x /= image_w
                         b_center_y /= image_h
                         b_width /= image_w

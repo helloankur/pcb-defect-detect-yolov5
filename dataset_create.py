@@ -16,7 +16,7 @@ classes = {0: "background (not used)", 1: "open", 2: "short", 3: "mousebite", 4:
 class create_dataset:
 
     def __init__(self,val_split=0.1,test_split=None,path_ds=" ",split_from_txt_file=True,train_txt_path="",
-                 test_txt_path="",img_resize=True,dsize=(240,240)):   # split default 0.1 for training set
+                 test_txt_path="",img_resize=True,dsize=(512,512)):   # split default 0.1 for training set
 
         self.img_resize=img_resize
         self.dsize=dsize

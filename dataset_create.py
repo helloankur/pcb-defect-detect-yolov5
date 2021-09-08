@@ -15,8 +15,12 @@ classes = {0: "background (not used)", 1: "open", 2: "short", 3: "mousebite", 4:
 
 class create_dataset:
 
-    def __init__(self,val_split=0.1,test_split=None,path_ds=" "):   # split default 0.1 for training set
+    def __init__(self,val_split=0.1,test_split=None,path_ds=" ",split_from_txt_file=True,train_txt_path="",
+                 test_txt_path=""):   # split default 0.1 for training set
 
+        self.split_from_txt_file=split_from_txt_file
+        self.train_txt_path=train_txt_path
+        self.test_txt_path=test_txt_path
 
         self.val_split=val_split
         self.test_split=test_split
@@ -44,26 +48,52 @@ class create_dataset:
 
     def directory_split(self):
 
-        label_list = ('dataset\\txt')
-        img_list = ('dataset\\img')
 
-        sample_label = (os.listdir(label_list))
-        sample_img = (os.listdir(img_list))
+        if self.split_from_txt_file:
+            with open(self.test_txt_path) as f:
+                for line in f.readlines():
+                    tmp_list=(line.split(" "))
+                    img_path_train,img_name_train=os.path.split(tmp_list[0])
+                    # print(img_name.replace('.jpg','_test.jpg'))
+                    self.test.append(img_name_train.replace('.jpg','_test.jpg'))
 
-        print(len(sample_label))
-        print(len(sample_img))
+            with open(self.train_txt_path) as f1:
+                for line in f1.readlines():
+                    tmp_list = (line.split(" "))
+                    img_path_test, img_name_test = os.path.split(tmp_list[0])
+                    # print(img_name.replace('.jpg', '_test.jpg'))
+                    self.train_val.append(img_name_test.replace('.jpg', '_test.jpg'))
 
-        random.seed(101)
-        random.shuffle(sample_img)
 
-        split_size = int(len(sample_img) * self.test_split)
 
-        self.train_val = sample_img[split_size:]
-        self.test = sample_img[:split_size]
+            val_split = int(len(self.train_val) * self.val_split)
+            random.seed(101)
+            random.shuffle(self.train_val)
+            self.train = self.train_val[val_split:]  # create train dataset from train_val text file
+            self.val = self.train_val[:val_split]  # create val dataset from train_val text file
+
+        else:
+
+            label_list = ('dataset/txt')
+            img_list = ('dataset/img')
+
+            sample_label = (os.listdir(label_list))
+            sample_img = (os.listdir(img_list))
+
+            print(len(sample_label))
+            print(len(sample_img))
+
+            random.seed(101)
+            random.shuffle(sample_img)
+
+            split_size = int(len(sample_img) * self.test_split)
+
+            self.train_val = sample_img[split_size:]
+            self.test = sample_img[:split_size]
 
         if self.val_split >0:
-            os.makedirs('tmp\\images\\val', exist_ok=True)
-            os.makedirs('tmp\\labels\\val', exist_ok=True)
+            os.makedirs('tmp/images/val', exist_ok=True)
+            os.makedirs('tmp/labels/val', exist_ok=True)
             val_split = int(len(self.train_val) * self.val_split)
             random.seed(45)
             random.shuffle(self.train_val)
@@ -78,12 +108,12 @@ class create_dataset:
         # print((len(self.test)))
         # print(len(self.val))
 
-        os.makedirs('tmp\\images\\train', exist_ok=True)
+        os.makedirs('tmp/images/train', exist_ok=True)
 
-        os.makedirs('tmp\\images\\test', exist_ok=True)
+        os.makedirs('tmp/images/test', exist_ok=True)
 
-        os.makedirs('tmp\\labels\\train', exist_ok=True)
-        os.makedirs('tmp\\labels\\test', exist_ok=True)
+        os.makedirs('tmp/labels/train', exist_ok=True)
+        os.makedirs('tmp/labels/test', exist_ok=True)
 
         self.datasets = [self.train, self.val, self.test]
         self.dir_nme = ['train', 'val', 'test']
@@ -91,9 +121,10 @@ class create_dataset:
 
     def one_dir_data_set(self):
 
-        os.makedirs("dataset\\img", exist_ok=True)
-        os.makedirs("dataset\\txt", exist_ok=True)
-        folder_img_dir = glob.glob(path_ds + '\\*\\*',recursive=True)
+        os.makedirs("dataset/img", exist_ok=True)
+        os.makedirs("dataset/txt", exist_ok=True)
+        folder_img_dir = glob.glob(path_ds + '/*/*',recursive=True)
+
 
         for i in tqdm(folder_img_dir):
             try:
@@ -103,13 +134,13 @@ class create_dataset:
                     if 'test' in tr_img:
                         # print(img_path)
                         # print(i)
-                        com_path = i + "\\" + tr_img
-                        shutil.copy(src=com_path, dst='dataset\\img')
+                        com_path = i + "/" + tr_img
+                        shutil.copy(src=com_path, dst='dataset/img')
                         # print(com_path)
 
                     elif '.txt' in tr_img:
-                        label_path = i + "\\" + tr_img
-                        shutil.copy(label_path, 'dataset\\txt')
+                        label_path = i + "/" + tr_img
+                        shutil.copy(label_path, 'dataset/txt')
             except NotADirectoryError:
                 print("Unknown file type ,required JPG or TXT format")
 
@@ -119,6 +150,7 @@ class create_dataset:
             except:pass
 
         self.directory_split()
+
 
     def dataset4yolo(self):
         for k in tqdm(self.datasets):
@@ -173,7 +205,7 @@ class create_dataset:
                         # print(tail_txt)
 
                         print("\n".join(print_buffer),
-                              file=open('tmp\\labels\\' + self.dir_nme[folder_num] + '\\' + tail_txt.strip('\n'), "w"))
+                              file=open('tmp/labels/' + self.dir_nme[folder_num] + '/' + tail_txt.strip('\n'), "w"))
 
                         id = tail_txt.strip('.txt')
 
@@ -207,16 +239,21 @@ class create_dataset:
         final_df.to_csv('meta.csv', index=False)
 
         print("Data set created Train data:" ,len(self.train))
+        print("++" * 50)
         print("Data set created Validation data:", len(self.val))
+        print("++" * 50)
         print("Data set created Test data:", len(self.test))
+        print("++" * 50)
         print("Meta file create as :meta.csv")
 
 
 
 if __name__ == '__main__':
     path_ds = 'DeepPCB/PCBData/'
-    test_txt_path='DeepPCB\\PCBData\\test.txt'
-    train_val_txt_path='DeepPCB\\PCBData\\trainval.txt'
-    run=create_dataset(test_split=0.33, path_ds=path_ds,val_split=0.0)
+    test_txt_path='DeepPCB/PCBData/test.txt'
+    train_val_txt_path='DeepPCB/PCBData/trainval.txt'
+    run= create_dataset(val_split=0.0, test_split=0.33, path_ds=path_ds,split_from_txt_file=True,
+                        train_txt_path=train_val_txt_path,test_txt_path=test_txt_path)
     run.one_dir_data_set()
     run.dataset4yolo()
+

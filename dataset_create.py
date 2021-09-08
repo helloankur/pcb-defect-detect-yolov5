@@ -199,6 +199,7 @@ class create_dataset:
 
                         # Normalise the co-ordinates by the dimensions of the image
                         image_w, image_h, image_c = img_read.shape
+                        print(image_w,image_h)
                         b_center_x /= image_w
                         b_center_y /= image_h
                         b_width /= image_w

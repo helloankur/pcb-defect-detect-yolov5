@@ -27,4 +27,4 @@ if __name__ == '__main__':
                 val='D:/SW_and_MANUALS/USER/PY_Projects/pcb-defect-detect-yolov5/tmp/images/test',
                 nc=7,
                 names=["background", "open", "short", "mousebite", "spur", "copper", "pin-hole"])
-    create_yaml(data_dic=data, path2yaml="yolov5/data/data.yaml")
+    create_yaml(data_dic=data, path2yaml="data/pcb_data.yaml")

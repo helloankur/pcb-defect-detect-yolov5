@@ -171,7 +171,6 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
         if classify:
             pred = apply_classifier(pred, modelc, img, im0s)
 
-
         # Process predictions
         for i, det in enumerate(pred):  # detections per image
             if webcam:  # batch_size >= 1
@@ -186,21 +185,18 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
             s += '%gx%g ' % img.shape[2:]  # print string
             gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
             imc = im0.copy() if save_crop else im0  # for save_crop
-            out=' '
+            out = ' '
             if len(det):
                 # Rescale boxes from img_size to im0 size
                 det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
 
                 # Print results
                 for c in det[:, -1].unique():
-
                     n = (det[:, -1] == c).sum()  # detections per class
 
                     s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
 
                     out += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # additional add to get string output
-
-
 
                 # Write results
                 for *xyxy, conf, cls in reversed(det):
@@ -255,18 +251,17 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 
     print(f'Done. ({time.time() - t0:.3f}s)')
 
-
-    return save_path,out
+    return save_path, out
 
 
 def parse_opt(im_path):
     parser = argparse.ArgumentParser()
     parser.add_argument('--weights', nargs='+', type=str, default=
-    'weights\\best.pt',
+    'weights/PCB_detect_weight.pt',
                         help='model.pt path(s)')
     parser.add_argument('--source', type=str, default=im_path, help='file/dir/URL/glob, 0 for webcam')
     parser.add_argument('--imgsz', '--img', '--img-size', nargs='+', type=int, default=[640], help='inference size h,w')
-    parser.add_argument('--conf-thres', type=float, default=0.25, help='confidence threshold')
+    parser.add_argument('--conf-thres', type=float, default=0.75, help='confidence threshold')
     parser.add_argument('--iou-thres', type=float, default=0.45, help='NMS IoU threshold')
     parser.add_argument('--max-det', type=int, default=1000, help='maximum detections per image')
     parser.add_argument('--device', default='', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
@@ -283,7 +278,7 @@ def parse_opt(im_path):
     parser.add_argument('--project', default='runs/detect', help='save results to project/name')
     parser.add_argument('--name', default='exp', help='save results to project/name')
     parser.add_argument('--exist-ok', action='store_true', help='existing project/name ok, do not increment')
-    parser.add_argument('--line-thickness', default=3, type=int, help='bounding box thickness (pixels)')
+    parser.add_argument('--line-thickness', default=1, type=int, help='bounding box thickness (pixels)')
     parser.add_argument('--hide-labels', default=False, action='store_true', help='hide labels')
     parser.add_argument('--hide-conf', default=False, action='store_true', help='hide confidences')
     parser.add_argument('--half', action='store_true', help='use FP16 half-precision inference')
@@ -295,38 +290,38 @@ def parse_opt(im_path):
 def main(opt):
     print(colorstr('detect: ') + ', '.join(f'{k}={v}' for k, v in vars(opt).items()))
     check_requirements(exclude=('tensorboard', 'thop'))
-    path,pred = run(**vars(opt))
-    return path,pred
+    path, pred = run(**vars(opt))
+    return path, pred
+
 
 def pred(im_path):
     # im_path = input("enter image path:")
-    #im_path = '00041002_test.jpg'
+    # im_path = '00041002_test.jpg'
     opt = parse_opt(im_path)
     pred_img_path, out = main(opt)
     # print(pred_img_path)
     # img = cv2.imread(pred_img_path)
 
-    return pred_img_path ,out
-
+    return pred_img_path, out
 
 
 if __name__ == "__main__":
     while True:
-        #im_path = input("enter image path:")
-        im_path='00041002_test.jpg'
+        # im_path = input("enter image path:")
+        im_path = '00041002_test.jpg'
         opt = parse_opt(im_path)
-        pred_img_path,out=main(opt)
-        img=cv2.imread(pred_img_path)
+        pred_img_path, out = main(opt)
+        img = cv2.imread(pred_img_path)
 
         # font
         font = cv2.FONT_HERSHEY_SIMPLEX
 
         # org
-        x=50
-        y=50
+        x = 50
+        y = 50
 
         # fontScale
-        fontScale = 1
+        fontScale = 3
 
         # Blue color in BGR
         color = (255, 0, 0)
@@ -334,19 +329,17 @@ if __name__ == "__main__":
         # Line thickness of 2 px
         thickness = 2
 
-
         print(out.strip("  ").split(","))
         for _ in out.strip(" ").split(","):
-            y+=30
-            print(_.strip(" ")+'\n')
-            img=cv2.putText(img,text=str(_.strip(" ")), org=(x,y), fontFace=font,fontScale=
-                   fontScale, color=color, thickness=thickness, lineType=cv2.LINE_AA)
+            y += 30
+            print(_.strip(" ") + '\n')
+            img = cv2.putText(img, text=str(_.strip(" ")), org=(x, y), fontFace=font, fontScale=
+            fontScale, color=color, thickness=thickness, lineType=cv2.LINE_AA)
 
         plt.imshow(img)
         plt.show()
 
-        shutil.rmtree('runs',ignore_errors=True)
+        shutil.rmtree('runs', ignore_errors=True)
         print("remove saved images")
         # os.removedirs('runs')
         time.sleep(1)
-
